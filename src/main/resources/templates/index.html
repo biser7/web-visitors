@@ -25,14 +25,26 @@
 <script>
     document.getElementById('loadCsvButton').addEventListener("click", function (e) {
         e.preventDefault();
+        let loadCsvButton = document.getElementById('loadCsvButton');
+        let moveToReport = document.getElementById('moveToReport');
+        let removeRecords = document.getElementById('removeRecords');
+        loadCsvButton.disabled = true;
+        moveToReport.disabled = true;
+        removeRecords.disabled = true;
         $.ajax({
             type: "GET",
             url: "http://localhost:8090/report/read-csv",
             success: function (result) {
                 console.log('ok');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
             },
             error: function (result) {
                 console.log('error');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
             }
         });
     });
@@ -44,14 +56,26 @@
 
     document.getElementById('removeRecords').addEventListener("click", function (e) {
         e.preventDefault();
+        let loadCsvButton = document.getElementById('loadCsvButton');
+        let moveToReport = document.getElementById('moveToReport');
+        let removeRecords = document.getElementById('removeRecords');
+        loadCsvButton.disabled = true;
+        moveToReport.disabled = true;
+        removeRecords.disabled = true;
         $.ajax({
             type: "DELETE",
             url: "http://localhost:8090/report/remove-data",
             success: function (result) {
                 console.log('ok');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
             },
             error: function (result) {
                 console.log('error');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
             }
         });
     });

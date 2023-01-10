@@ -29,6 +29,7 @@ public class VisitorController {
 
         visitorService.runReadFileJob();
         ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("job-status", true);
         modelAndView.setViewName("index");
         return modelAndView;
     }
