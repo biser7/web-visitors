@@ -13,6 +13,9 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,9 +25,12 @@ import java.util.Map;
 @Service
 public class VisitorServiceImpl implements VisitorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VisitorServiceImpl.class);
+    private static final int FIRST_PAGE = 0;
     private final VisitorRepository visitorRepository;
     private final JobLauncher jobLauncher;
     private final Job job;
+    @Value("${page.size}")
+    private int pageSize;
 
     public VisitorServiceImpl(VisitorRepository visitorRepository, JobLauncher jobLauncher, Job job) {
         this.visitorRepository = visitorRepository;
@@ -34,7 +40,8 @@ public class VisitorServiceImpl implements VisitorService {
 
     @Override
     public List<VisitorCount> getVisitorsStatistic() {
-        return visitorRepository.getVisitorsStatistic();
+        Pageable paging = PageRequest.of(FIRST_PAGE, pageSize);
+        return visitorRepository.getVisitorsStatistic(paging);
     }
 
     @Override
