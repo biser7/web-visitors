@@ -15,21 +15,19 @@
 </head>
 <body>
 <div class="container">
-    <h2>WEBPAGE VISITORS REPORT</h2>
+    <h2>WEBPAGE UNIQUE VISITORS PER SOURCE REPORT</h2>
 
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>E-mail</th>
-            <th>Phone</th>
+            <th>Source</th>
             <th>Visits count</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="v : ${visitors}">
-            <td th:text="${v.email}"></td>
-            <td th:text="${v.phone}"></td>
-            <td th:text="${v.visitQuantity}"></td>
+        <tr th:each="sourceToCount : ${visitors}">
+            <td th:text="${sourceToCount.source}"></td>
+            <td th:text="${sourceToCount.count}"></td>
         </tr>
         </tbody>
     </table>
