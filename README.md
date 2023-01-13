@@ -26,10 +26,13 @@ Controller is covered by Mock Mvc tests
 
 ### How to use
 Run the application using your favorite IDE (it was designed via Idea IJ)\
+or run the following command from project root directory:\
+`mvn clean install`
+`docker-compose up -d`
 After the server is being started, the result could be checked via favorite browser\
 using the following host: `localhost:8090`\
 The application requires availability of run `MySql:8` server.\
-It can be run via docker and the following commands:\
+It can be run via docker and the following commands (in case of run via IDE):\
 `docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:8`\
 The application allows setting file path, delimiter and page size via `application.properties` file.\
 It has two pages:

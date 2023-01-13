@@ -18,7 +18,7 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
@@ -28,14 +28,14 @@ public class BatchConfiguration {
     private static final int CONCURRENCY_LIMIT = 10;
     private static final int CHUNK_SIZE = 50;
     @Value("${csv.file.path}")
-    private String csvFilePath;
+    private String csvResourceFileName;
     @Value("${csv.file.delimiter}")
     private String csvDelimiter;
 
     @Bean
     public FlatFileItemReader<Visitor> itemReader() {
         FlatFileItemReader<Visitor> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new FileSystemResource(csvFilePath));
+        flatFileItemReader.setResource(new ClassPathResource(csvResourceFileName));
         flatFileItemReader.setName("visitors-csv-reader");
         flatFileItemReader.setLinesToSkip(1);
         flatFileItemReader.setLineMapper(lineMapper());
