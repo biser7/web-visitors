@@ -1,6 +1,6 @@
 package com.webvisitors.service;
 
-import com.webvisitors.model.VisitorCount;
+import com.webvisitors.model.SourceCount;
 import com.webvisitors.repository.VisitorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +39,9 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
-    public List<VisitorCount> getVisitorsStatistic() {
+    public List<SourceCount> getSourceUniqueVisitors() {
         Pageable paging = PageRequest.of(FIRST_PAGE, pageSize);
-        return visitorRepository.getVisitorsStatistic(paging);
+        return visitorRepository.getSourceUniqueVisitors(paging);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.webvisitors.repository;
 
+import com.webvisitors.model.SourceCount;
 import com.webvisitors.model.Visitor;
-import com.webvisitors.model.VisitorCount;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {
-    @Query("""
-            SELECT new com.webvisitors.model.VisitorCount(v.email, v.phone, COUNT(v.email)) FROM Visitor AS v
-            WHERE v.email  <> '' AND v.phone <> ''
-            GROUP BY v.email, v.phone""")
-    List<VisitorCount> getVisitorsStatistic(Pageable pageable);
+    @Query(value = "SELECT source, COUNT(DISTINCT email, phone) AS count FROM visitors WHERE email <> '' AND phone <> '' GROUP BY source",
+            nativeQuery = true)
+    List<SourceCount> getSourceUniqueVisitors(Pageable pageable);
 }

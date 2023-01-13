@@ -1,6 +1,6 @@
 package com.webvisitors.controller;
 
-import com.webvisitors.model.VisitorCount;
+import com.webvisitors.model.SourceCount;
 import com.webvisitors.service.VisitorService;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -34,11 +34,11 @@ public class VisitorController {
     }
 
     @GetMapping("/visitors")
-    public ModelAndView getVisitorsStatistic() {
-        List<VisitorCount> visitorCountList = visitorService.getVisitorsStatistic();
+    public ModelAndView getUniqueVisitorsStatistic() {
+        List<SourceCount> sourceToCountList = visitorService.getSourceUniqueVisitors();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("report");
-        modelAndView.addObject("visitors", visitorCountList);
+        modelAndView.addObject("visitors", sourceToCountList);
         return modelAndView;
     }
 
