@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Web Page Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>WEBPAGE ANALYTICS</h2>
+    <h4>Process visitors via preliminary loaded .csv file to server</h4>
+    <button type="button" class="btn btn-outline-secondary" id="loadCsvButton">Load CSV File</button>
+    <button type="button" class="btn btn-outline-secondary" id="moveToReport">Check Report</button>
+    <button type="button" class="btn btn-outline-secondary" id="removeRecords">Delete DB Records</button>
+</div>
+
+<script>
+    document.getElementById('loadCsvButton').addEventListener("click", function (e) {
+        e.preventDefault();
+        let loadCsvButton = document.getElementById('loadCsvButton');
+        let moveToReport = document.getElementById('moveToReport');
+        let removeRecords = document.getElementById('removeRecords');
+        loadCsvButton.disabled = true;
+        moveToReport.disabled = true;
+        removeRecords.disabled = true;
+        let currentUrl = window.location.href;
+        $.ajax({
+            type: "GET",
+            url: currentUrl + "report/read-csv",
+            success: function (result) {
+                console.log('ok');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
+            },
+            error: function (result) {
+                console.log('error');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
+            }
+        });
+    });
+
+    document.getElementById('moveToReport').addEventListener("click", function (e) {
+        e.preventDefault();
+        let currentUrl = window.location.href;
+        location.href = currentUrl + "report/visitors";
+    });
+
+    document.getElementById('removeRecords').addEventListener("click", function (e) {
+        e.preventDefault();
+        let loadCsvButton = document.getElementById('loadCsvButton');
+        let moveToReport = document.getElementById('moveToReport');
+        let removeRecords = document.getElementById('removeRecords');
+        loadCsvButton.disabled = true;
+        moveToReport.disabled = true;
+        removeRecords.disabled = true;
+        let currentUrl = window.location.href;
+        $.ajax({
+            type: "DELETE",
+            url: currentUrl + "report/remove-data",
+            success: function (result) {
+                console.log('ok');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
+            },
+            error: function (result) {
+                console.log('error');
+                loadCsvButton.disabled = false;
+                moveToReport.disabled = false;
+                removeRecords.disabled = false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

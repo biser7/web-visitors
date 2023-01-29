@@ -1,0 +1,123 @@
+##############################################
+# CI / CD pipeline for web-visitors
+#############################################
+name: CI/CD Workflow
+env:
+  S3_BUCKET_NAME        : "web-visitors-1"
+  EB_APPLICATION_NAME   : "web-visitors"
+  EB_ENVIRONMENT_NAME   : "Webvisitors-env"
+  DEPLOY_PACKAGE_NAME   : "web-visitors-app-1.0.jar"
+  AWS_REGION_NAME       : "us-east-1"
+  MIN_PROJECT_COVERAGE  : 0
+
+on:
+  push:
+    branches: [develop, master]
+permissions: write-all
+
+jobs:
+# CI Steps
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Check out result
+        run: echo "The ${{ github.event.repository.name }} repository has been cloned to the runner."
+      - name: Project Compilation
+        run: mvn clean compile
+      - name: Project Tests Run
+        run: |
+             echo "Branch name is ${{ github.ref }} Tests are running using Maven."
+             mvn clean test
+
+      - name: Generate Coverage Report
+        run: mvn -B verify -P coverage --no-transfer-progress
+
+      - name: Upload Report
+        uses: 'actions/upload-artifact@v2'
+        with:
+          name: jacoco-report
+          path: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: ${{ env.MIN_PROJECT_COVERAGE }}
+          min-coverage-changed-files: ${{ env.MIN_PROJECT_COVERAGE }}
+          title: Code Coverage
+
+      - name: Save Coverage To Environment Variable
+        run: |
+          echo "TOTAL_COVERAGE=${{ steps.jacoco.outputs.coverage-overall }}" >> "$GITHUB_ENV"
+          echo "CHANGED_FILES_COVERAGE=${{ steps.jacoco.outputs.coverage-changed-files }}" >> "$GITHUB_ENV"
+
+      - name: Print & Check Coverage Info
+        run: |
+          import os
+          import sys
+          print("Total Coverage: " + str(os.environ["TOTAL_COVERAGE"]))
+          print("Changed Files Coverage: " + str(os.environ["CHANGED_FILES_COVERAGE"]))
+          if float(os.environ["TOTAL_COVERAGE"]) < float("${{ env.MIN_PROJECT_COVERAGE }}") or float(os.environ["CHANGED_FILES_COVERAGE"]) < float("${{ env.MIN_PROJECT_COVERAGE }}"):
+            print("Insufficient Coverage!")
+            sys.exit(-1) # Cause Status Check Failure due to noncompliant coverage
+          sys.exit(0)
+        shell: python
+
+      - name: Super-Linter Details
+        run: echo "Branch name is ${{ github.ref }} Super-Linter is starting."
+      - name: Super-Linter Job
+        uses: github/super-linter/slim@v4.10.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_HTML: false
+          VALIDATE_GOOGLE_JAVA_FORMAT: false
+          FILTER_REGEX_EXCLUDE: .*(src/main/java/com/webvisitors/WebVisitorsApplication.java|test/.*|github/workspace/mvnw)
+      - name: CI Steps results
+        run: echo "CI Steps for the repository ${{ github.event.repository.name }} are completed successfully."
+# CD Steps
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        run: echo "This deploy job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Project Packaging
+        run: mvn clean package
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION_NAME }}
+      - name: Copy deployment package to S3 bucket
+        run: aws s3 cp target/${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.S3_BUCKET_NAME }}
+      - name: Create new ElasticBeanstalk App Version
+        run: |
+          aws elasticbeanstalk create-application-version \
+          --application-name ${{ env.EB_APPLICATION_NAME }} \
+          --source-bundle "S3Bucket=${{ env.S3_BUCKET_NAME }}, S3Key=${{ env.DEPLOY_PACKAGE_NAME }}" \
+          --version-label "v-${{ github.sha }}"
+      - name: Deploy new ElasticBeanstalk App Version
+        run: |
+          aws elasticbeanstalk update-environment \
+          --environment-name ${{ env.EB_ENVIRONMENT_NAME }} \
+          --version-label "v-${{ github.sha }}"
+      - name: CD Steps results
+        run: echo "CD Steps for the repository ${{ github.event.repository.name }} are completed successfully."

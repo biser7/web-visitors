@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  app-mysql:
+    image: mysql:8
+    restart: on-failure
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3306:3306
+
+  app-main:
+    container_name: web-visitors-app
+    restart: always
+    build: .
+    depends_on:
+      - app-mysql
+    ports:
+      - 8090:8090
+    environment:
+      - MYSQL_HOST=app-mysql
+      - MYSQL_USER_NAME=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_PORT=3306
