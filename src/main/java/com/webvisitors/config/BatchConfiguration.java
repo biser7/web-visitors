@@ -32,6 +32,10 @@ public class BatchConfiguration {
     @Value("${csv.file.delimiter}")
     private String csvDelimiter;
 
+    /**
+     * Will be used for building of Job for our operation
+     * @return FlatFileItemReader
+     */
     @Bean
     public FlatFileItemReader<Visitor> itemReader() {
         FlatFileItemReader<Visitor> flatFileItemReader = new FlatFileItemReader<>();
@@ -42,6 +46,10 @@ public class BatchConfiguration {
         return flatFileItemReader;
     }
 
+    /**
+     * Method which return LineMapper needed for our ItemReader
+     * @return LineMapper
+     */
     @Bean
     public LineMapper<Visitor> lineMapper() {
         DefaultLineMapper<Visitor> defaultLineMapper = new DefaultLineMapper<>();
@@ -57,10 +65,19 @@ public class BatchConfiguration {
         return defaultLineMapper;
     }
 
+    /**
+     *
+     * @param jobBuilderFactory get from Spring
+     * @param stepBuilderFactory get from Spring
+     * @param itemReader implemented for CSV read
+     * @param itemProcessor implemented to put into lowercase
+     * @param itemWriter implemented to write to DB
+     * @return Job needed for the operation
+     */
     @Bean
-    public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
-                   ItemReader<Visitor> itemReader, ItemProcessor<Visitor, Visitor> itemProcessor,
-                   ItemWriter<Visitor> itemWriter) {
+    public Job job(final JobBuilderFactory jobBuilderFactory, final StepBuilderFactory stepBuilderFactory,
+                   final ItemReader<Visitor> itemReader, final ItemProcessor<Visitor, Visitor> itemProcessor,
+                   final ItemWriter<Visitor> itemWriter) {
 
         Step step = stepBuilderFactory.get("visitors-parse-step")
                 .<Visitor, Visitor>chunk(CHUNK_SIZE)
@@ -76,6 +93,10 @@ public class BatchConfiguration {
                 .build();
     }
 
+    /**
+     * Will create a bean of TaskExecutor, which allow to run several Threads
+     * @return TaskExecutor
+     */
     @Bean
     public TaskExecutor taskExecutor() {
         SimpleAsyncTaskExecutor sate = new SimpleAsyncTaskExecutor();

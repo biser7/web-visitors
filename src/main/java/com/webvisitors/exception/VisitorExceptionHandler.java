@@ -13,14 +13,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class VisitorExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorExceptionHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VisitorExceptionHandler.class);
 
     @ExceptionHandler({JobInstanceAlreadyCompleteException.class, JobExecutionAlreadyRunningException.class,
             JobParametersInvalidException.class, JobRestartException.class})
     public final ModelAndView handleAllExceptions(Exception ex) {
 
         String errorMessage = (ex != null ? ex.getMessage() : "Unknown error");
-        LOGGER.error(errorMessage);
+        LOG.error(errorMessage);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("error");
         modelAndView.addObject("message", errorMessage);

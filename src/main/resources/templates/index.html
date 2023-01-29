@@ -31,9 +31,10 @@
         loadCsvButton.disabled = true;
         moveToReport.disabled = true;
         removeRecords.disabled = true;
+        let currentUrl = window.location.href;
         $.ajax({
             type: "GET",
-            url: "http://localhost:8090/report/read-csv",
+            url: currentUrl + "report/read-csv",
             success: function (result) {
                 console.log('ok');
                 loadCsvButton.disabled = false;
@@ -51,7 +52,8 @@
 
     document.getElementById('moveToReport').addEventListener("click", function (e) {
         e.preventDefault();
-        location.href = "http://localhost:8090/report/visitors";
+        let currentUrl = window.location.href;
+        location.href = currentUrl + "report/visitors";
     });
 
     document.getElementById('removeRecords').addEventListener("click", function (e) {
@@ -62,9 +64,10 @@
         loadCsvButton.disabled = true;
         moveToReport.disabled = true;
         removeRecords.disabled = true;
+        let currentUrl = window.location.href;
         $.ajax({
             type: "DELETE",
-            url: "http://localhost:8090/report/remove-data",
+            url: currentUrl + "report/remove-data",
             success: function (result) {
                 console.log('ok');
                 loadCsvButton.disabled = false;

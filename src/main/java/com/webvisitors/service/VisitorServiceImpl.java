@@ -32,7 +32,9 @@ public class VisitorServiceImpl implements VisitorService {
     @Value("${page.size}")
     private int pageSize;
 
-    public VisitorServiceImpl(VisitorRepository visitorRepository, JobLauncher jobLauncher, Job job) {
+    public VisitorServiceImpl(final VisitorRepository visitorRepository,
+                              final JobLauncher jobLauncher, final Job job) {
+
         this.visitorRepository = visitorRepository;
         this.jobLauncher = jobLauncher;
         this.job = job;

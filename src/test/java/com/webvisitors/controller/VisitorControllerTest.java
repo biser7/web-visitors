@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(VisitorController.class)
 @ContextConfiguration(classes = {VisitorController.class})
-public class VisitorControllerTest {
+class VisitorControllerTest {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private MockMvc mockMvc;
@@ -26,7 +26,7 @@ public class VisitorControllerTest {
     VisitorService visitorService;
 
     @Test
-    public void whenCallGetVisitorsStatisticShouldResponseOk() throws Exception {
+    void whenCallGetVisitorsStatisticShouldResponseOk() throws Exception {
         this.mockMvc
                 .perform(get("/report/visitors"))
                 .andDo(print())
@@ -36,7 +36,7 @@ public class VisitorControllerTest {
     }
 
     @Test
-    public void whenCallRunReadCsvJobShouldResponseOk() throws Exception {
+    void whenCallRunReadCsvJobShouldResponseOk() throws Exception {
         this.mockMvc
                 .perform(get("/report/read-csv"))
                 .andDo(print())
@@ -45,7 +45,7 @@ public class VisitorControllerTest {
     }
 
     @Test
-    public void whenCallRemoveAllRecordsShouldResponseOk() throws Exception {
+    void whenCallRemoveAllRecordsShouldResponseOk() throws Exception {
         this.mockMvc
                 .perform(delete("/report/remove-data"))
                 .andDo(print())
